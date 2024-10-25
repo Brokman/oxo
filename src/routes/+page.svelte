@@ -1,9 +1,12 @@
 <script lang="ts">
+    import Circle from "$lib/icons/Circle.svelte";
+    import Cross from "$lib/icons/Cross.svelte";
+    import SquareDashed from "$lib/icons/SquareDashed.svelte";
     import { onMount } from "svelte";
 
     let table: number[][] = [];
 
-    let currentPlayer = 'circle';
+    let currentPlayer = "circle";
 
     const resetTable = (size: number = 3) => {
         table = [];
@@ -24,18 +27,18 @@
     });
 
     const switchPlayer = async () => {
-
-        
-        if(checkWin()){
+        if (checkWin()) {
             // Let time for action to render before alert
-            await new Promise<void>((resolve, reject) => setTimeout(() => {
-                resolve();
-            }, 10));
+            await new Promise<void>((resolve, reject) =>
+                setTimeout(() => {
+                    resolve();
+                }, 10),
+            );
             alert(`Player ${checkWin()} has won!`);
-        };
+        }
 
-        currentPlayer === 'circle' ? currentPlayer = 'cross' : currentPlayer = 'circle';
-    }
+        currentPlayer === "circle" ? (currentPlayer = "cross") : (currentPlayer = "circle");
+    };
 
     const checkWin = () => {
         // if fixedrow, any col === 3 || -3
@@ -43,9 +46,9 @@
         // if 00 11 22 === 3 || -3
         // if 02 11 20 === 3 || -3
         const matrix: number[][] = table;
-    
+
         // Calculate sum of rows
-        const colSums = matrix.map(col => col.reduce((sum, current) => sum + current, 0));
+        const colSums = matrix.map((col) => col.reduce((sum, current) => sum + current, 0));
 
         // Calculate sum of columns
         const rowSums = matrix[0].map((_row, rowIndex) => matrix.reduce((sum, current) => sum + current[rowIndex], 0));
@@ -54,25 +57,34 @@
         const diagonal1Sum = matrix.reduce((sum, current, index) => sum + current[index], 0);
         const diagonal2Sum = matrix.reduce((sum, current, index) => sum + current[matrix.length - index - 1], 0);
 
-        console.log("Column sums:", rowSums)
-        console.log("Row sums:", colSums)
-        console.log("Diagonal 1 sum:", diagonal1Sum)
-        console.log("Diagonal 2 sum:", diagonal2Sum)
+        console.log("Column sums:", rowSums);
+        console.log("Row sums:", colSums);
+        console.log("Diagonal 1 sum:", diagonal1Sum);
+        console.log("Diagonal 2 sum:", diagonal2Sum);
 
-        if(colSums.includes(3) || rowSums.includes(3) || diagonal1Sum === 3 || diagonal2Sum === 3) {
-            return 'circle';
-        } else if(colSums.includes(-3) || rowSums.includes(-3) || diagonal1Sum === -3 || diagonal2Sum === -3) {
-            return 'cross'; 
-        }
-        else {
+        if (colSums.includes(3) || rowSums.includes(3) || diagonal1Sum === 3 || diagonal2Sum === 3) {
+            return "circle";
+        } else if (colSums.includes(-3) || rowSums.includes(-3) || diagonal1Sum === -3 || diagonal2Sum === -3) {
+            return "cross";
+        } else {
             return false;
         }
-    }
+    };
 
     const onClickCell = (rowIndex: number, colIndex: number) => {
-        table[rowIndex][colIndex] = currentPlayer === 'circle' ?  1 : -1;
+        table[rowIndex][colIndex] = currentPlayer === "circle" ? 1 : -1;
         switchPlayer();
-    }
+    };
+
+    const renderCell = (value: number = 0) => {
+        if (value === 1) {
+            return ;
+        } else if (value === -1) {
+            return (Cross);
+        } else {
+            return '';
+        }
+    };
 </script>
 
 <div class="container p-2 flex flex-col items-center gap-10">
@@ -84,15 +96,24 @@
                 {#each table as row, rIndex}
                     <div class="flex flex-col gap-2">
                         {#each row as cell, cIndex}
-                            <button class="btn" on:click={() => onClickCell(rIndex, cIndex)} disabled={cell !== 0}>{`[${rIndex},${cIndex}]: ${cell}`}</button>
+                            <button class="btn text-center min-h-15 max-w-full max-h-full" on:click={() => onClickCell(rIndex, cIndex)} disabled={cell !== 0}
+                                >
+                                {#if cell === 1}
+                                <Circle/>
+                                {:else if cell === -1}
+                                <Cross/>
+                                {:else}
+                                <div class="w-7 h-15"></div>
+                                {/if}
+                                </button
+                            >
                         {/each}
                     </div>
                 {/each}
             </div>
         </div>
-      </div>
+    </div>
     <div>
         Current Playing: {currentPlayer}
     </div>
 </div>
-
