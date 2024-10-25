@@ -12,5 +12,11 @@ export default {
   theme: {
     extend: {}
   },
-  plugins: [typography, forms, containerQueries, aspectRatio, flyonui, flyonuiPlugin]
+  plugins: [
+    typography, 
+    forms, 
+    containerQueries, 
+    aspectRatio, 
+    flyonui, 
+    flyonuiPlugin]
 } as Config;
